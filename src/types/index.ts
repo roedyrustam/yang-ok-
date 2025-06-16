@@ -59,7 +59,7 @@ export interface Sale {
   staffId: string;
 }
 
-export interface PricingData {
+interface PricingData {
   greenBeanCost: number;
   roastedBeanCost: number;
   operatingCosts: number;
@@ -67,7 +67,7 @@ export interface PricingData {
   margin: number;
 }
 
-export interface FinancialReport {
+interface FinancialReport {
   period: string;
   revenue: number;
   costs: number;

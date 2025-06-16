@@ -113,4 +113,3 @@ const convertTimestamps = (obj: DocumentData): any => {
   return converted;
 };
 
-export default useFirestore;
