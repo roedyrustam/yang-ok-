@@ -1,151 +1,206 @@
 ## 🫘 BeansHub – Aplikasi Manajemen Roastery Terintegrasi
+
 BeansHub adalah platform digital cerdas untuk membantu coffee house roastery kecil-menengah dalam mengelola seluruh proses bisnis — dari pengadaan green bean, proses roasting, hingga penjualan dan pelaporan keuangan, secara otomatis dan real-time.
 
-# 🔒 Teknologi Inti
-Database: Firestore (Cloud Firestore – NoSQL realtime database dari Google)
+## 🔒 Teknologi Inti
 
-Authentication: Google Sign-In / Firebase Authentication
+**Database:** Firebase Firestore (NoSQL realtime database)
 
-Arsitektur: Modular, terintegrasi otomatis antar fitur
+**Authentication:** Firebase Authentication
 
-Real-Time Update: Setiap perubahan data langsung tercermin di seluruh sistem
+**Frontend:** React + TypeScript + Tailwind CSS
 
-# 🎯 Modul Utama & Alur Terintegrasi
-1. Modul Manajemen Stok Bahan Baku (Green Bean)
-Tujuan: Memastikan ketersediaan stok bahan baku secara akurat.
+**Arsitektur:** Modular, terintegrasi otomatis antar fitur
 
-Fitur:
-Pencatatan Masuk Green Bean
+**Real-Time Update:** Setiap perubahan data langsung tercermin di seluruh sistem
 
-Input: Nama pemasok, jenis biji, kuantitas (kg), harga beli/kg, tanggal masuk
+## 🚀 Setup Firebase
 
-Stok Real-time
+### 1. Buat Project Firebase
 
-Monitoring jumlah stok green bean per jenis
+1. Kunjungi [Firebase Console](https://console.firebase.google.com/)
+2. Klik "Add project" dan ikuti langkah-langkah setup
+3. Aktifkan Authentication dan Firestore Database
 
-Riwayat Pergerakan Stok
+### 2. Konfigurasi Authentication
 
-Lacak penggunaan untuk proses roasting
+1. Di Firebase Console, buka "Authentication" > "Sign-in method"
+2. Aktifkan "Email/Password" provider
+3. Tambahkan domain yang diizinkan jika diperlukan
 
-2. Modul Roasting
-Tujuan: Mengelola proses roasting dengan efisiensi dan akurasi stok.
+### 3. Konfigurasi Firestore
 
-Fitur:
-Input Roasting
+1. Di Firebase Console, buka "Firestore Database"
+2. Buat database dalam mode "Start in test mode" (untuk development)
+3. Atur rules sesuai kebutuhan produksi
 
-Pilih green bean dari stok
+### 4. Dapatkan Konfigurasi Firebase
 
-Masukkan jumlah (kg)
+1. Di Firebase Console, buka "Project settings" > "General"
+2. Scroll ke bawah ke "Your apps" dan klik "Web app"
+3. Copy konfigurasi Firebase
 
-Pilih Profil Roasting dari modul Log
+### 5. Setup Environment Variables
 
-Kalkulasi Penyusutan Otomatis
+1. Copy file `.env.example` menjadi `.env`
+2. Isi dengan konfigurasi Firebase Anda:
 
-Formula default: Penyusutan 20%
+```env
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+```
 
-Contoh: 10 kg → 8 kg roasted bean
+## 🎯 Modul Utama & Alur Terintegrasi
 
-Update Otomatis Stok
+### 1. Modul Manajemen Stok Bahan Baku (Green Bean)
+**Tujuan:** Memastikan ketersediaan stok bahan baku secara akurat.
 
-Green bean berkurang, roasted bean bertambah
+**Fitur:**
+- Pencatatan Masuk Green Bean
+- Stok Real-time dengan Firebase Firestore
+- Riwayat Pergerakan Stok
+- Notifikasi stok rendah otomatis
 
-3. Modul Log & Profil Roasting
-Tujuan: Menstandarkan dan melacak proses roasting.
+### 2. Modul Roasting
+**Tujuan:** Mengelola proses roasting dengan efisiensi dan akurasi stok.
 
-Fitur:
-Manajemen Profil Roasting
+**Fitur:**
+- Input Roasting dengan validasi stok
+- Kalkulasi Penyusutan Otomatis (default 20%)
+- Update Otomatis Stok di Firestore
+- Integrasi dengan profil roasting
 
-Buat/edit profil: nama, kurva suhu, durasi, catatan
+### 3. Modul Log & Profil Roasting
+**Tujuan:** Menstandarkan dan melacak proses roasting.
 
-Log Roasting Otomatis
+**Fitur:**
+- Manajemen Profil Roasting tersimpan di cloud
+- Log Roasting Otomatis real-time
+- Riwayat & Analisis performa
+- Sinkronisasi antar device
 
-Diisi langsung setiap sesi dari Modul Roasting
+### 4. Modul Estimasi Harga Jual
+**Tujuan:** Memberikan kontrol penuh terhadap perhitungan HPP & harga jual.
 
-Data: tanggal, jenis green bean, kuantitas awal & akhir, profil, catatan
+**Fitur:**
+- HPP calculation dengan data real-time dari Firestore
+- Estimasi Harga Jual dengan margin dinamis
+- Riwayat perhitungan tersimpan
 
-Riwayat & Analisis
+### 5. Modul Manajemen Penjualan
+**Tujuan:** Mendata penjualan dan pergerakan stok hasil produk.
 
-Tampilkan performa roasting secara historis
+**Fitur:**
+- Pencatatan Transaksi real-time
+- Update Stok Otomatis di Firestore
+- Data Pelanggan tersimpan aman
+- Integrasi dengan laporan keuangan
 
-4. Modul Estimasi Harga Jual
-Tujuan: Memberikan kontrol penuh terhadap perhitungan HPP & harga jual.
+### 6. Modul Laporan Keuangan
+**Tujuan:** Menyajikan kinerja bisnis secara menyeluruh.
 
-Fitur:
-HPP Green Bean: Diambil dari harga beli per kg
+**Fitur:**
+- Laporan real-time dari data Firestore
+- Export PDF dan JSON
+- Dashboard analytics
+- Multi-device access
 
-HPP Roasted Bean:
+## 🔐 Keamanan & Authentication
 
-Formula:
-(Harga Beli / 0.8) + Biaya Operasional/kg
+- **Firebase Authentication:** Login aman dengan email/password
+- **Firestore Security Rules:** Akses data berdasarkan role user
+- **Real-time Validation:** Validasi data di client dan server
+- **Secure Environment:** Environment variables untuk konfigurasi sensitif
 
-Input manual biaya roasting (gas, listrik, tenaga kerja)
+## 🚀 Instalasi & Menjalankan
 
-Estimasi Harga Jual
+```bash
+# Install dependencies
+npm install
 
-Tambah margin keuntungan (persentase)
+# Setup environment variables
+cp .env.example .env
+# Edit .env dengan konfigurasi Firebase Anda
 
-Output: Rekomendasi harga jual roasted bean per kg
+# Jalankan development server
+npm run dev
 
-5. Modul Manajemen Penjualan
-Tujuan: Mendata penjualan dan pergerakan stok hasil produk.
+# Build untuk production
+npm run build
+```
 
-Fitur:
-Pencatatan Transaksi Penjualan
+## 👥 Role & Permissions
 
-Produk: roasted / green bean
+### Admin
+- Akses penuh ke semua fitur
+- Manajemen user dan permissions
+- Laporan keuangan dan analytics
+- Pengaturan sistem
 
-Detail: jenis, kuantitas, harga jual/kg, tanggal, metode bayar
+### Roaster
+- Operasi roasting dan profil
+- Quality control dan cupping
+- Perencanaan produksi
+- Manajemen inventori
 
-Update Stok Otomatis
+### Staff
+- Manajemen penjualan
+- Inventori dasar (view only)
+- Dashboard operasional
 
-Stok dikurangi sesuai produk yang terjual
+## 🔄 Real-time Features
 
-Data Pelanggan (Opsional)
+- **Live Inventory Updates:** Stok terupdate real-time di semua device
+- **Instant Notifications:** Notifikasi stok rendah dan aktivitas penting
+- **Collaborative Editing:** Multiple user dapat bekerja bersamaan
+- **Offline Support:** Data tersinkronisasi saat koneksi kembali
 
-Simpan nama & histori pelanggan
+## 🛡️ Firestore Security Rules
 
-6. Modul Laporan Keuangan
-Tujuan: Menyajikan kinerja bisnis secara menyeluruh.
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Authenticated users can read/write business data
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
 
-Fitur:
-Laporan Laba Rugi
+## 📱 Progressive Web App
 
-Pendapatan: dari penjualan
+BeansHub dapat diinstall sebagai PWA untuk pengalaman native-like di desktop dan mobile.
 
-HPP: dari HPP produk yang dijual
+## 🔧 Development
 
-Biaya Operasional: termasuk biaya roasting atau input manual
+```bash
+# Linting
+npm run lint
 
-Laba Bersih
+# Type checking
+npx tsc --noEmit
 
-Arus Kas
+# Preview production build
+npm run preview
+```
 
-Kas Masuk: dari penjualan
+## 📞 Support
 
-Kas Keluar: pembelian bahan, operasional
+Untuk bantuan teknis atau pertanyaan:
+- Email: dev@sidepe.com
+- Telepon: +62 812 4100 3047
 
-Neraca Usaha
+---
 
-Aset: stok & kas
-
-Kewajiban & ekuitas
-
-# ⚙️ Alur Integrasi Otomatis (Sirkulasi Data)
-Stok Green Bean Masuk → Modul Roasting
-
-Roasting → Otomatis update stok roasted bean + Log roasting
-
-Hasil Roasting → Dihitung HPP → Estimasi Harga Jual
-
-Penjualan → Kurangi stok + Catat pemasukan → Masuk ke laporan keuangan
-
-Semua data → Otomatis muncul dalam Laporan Keuangan & Analisis
-
-🚀 Keunggulan BeansHub
-Realtime & Otomatis: Minim kesalahan input manual
-
-Fleksibel: Bisa diakses oleh roastery kecil dengan 1 roaster, maupun bisnis yang mulai berkembang
-
-Berbasis Cloud: Aman, scalable, dan efisien
-
-User-friendly: UI/UX disederhanakan untuk operasional harian
+**BeansHub** - Digitalisasi Roastery Kopi Indonesia 🇮🇩

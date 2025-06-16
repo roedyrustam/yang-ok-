@@ -8,7 +8,7 @@ import StockMovementModal from './StockMovementModal';
 import BeanDetailsModal from './BeanDetailsModal';
 
 export default function InventoryManagement() {
-  const { state, dispatch } = useAppContext();
+  const { state, services } = useAppContext();
   const { greenBeans } = state;
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -50,9 +50,12 @@ export default function InventoryManagement() {
   const totalValue = greenBeans.reduce((sum, bean) => sum + (bean.quantity * bean.purchasePricePerKg), 0);
   const lowStockCount = greenBeans.filter(bean => bean.quantity <= bean.lowStockThreshold).length;
 
-  const handleDeleteBean = (id: string) => {
+  const handleDeleteBean = async (id: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus biji kopi ini?')) {
-      dispatch({ type: 'DELETE_GREEN_BEAN', payload: id });
+      const result = await services.greenBeans.remove(id);
+      if (!result.success) {
+        alert('Gagal menghapus biji kopi: ' + result.error);
+      }
     }
   };
 
@@ -69,15 +72,6 @@ export default function InventoryManagement() {
   const handleStockMovement = (bean: GreenBean) => {
     setSelectedBean(bean);
     setShowMovementModal(true);
-  };
-
-  const toggleSort = (field: 'name' | 'quantity' | 'date') => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('asc');
-    }
   };
 
   const BeanCard = ({ bean }: { bean: GreenBean }) => (
@@ -275,7 +269,12 @@ export default function InventoryManagement() {
       </div>
 
       {/* Content */}
-      {viewMode === 'grid' ? (
+      {services.greenBeans.loading ? (
+        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Memuat data...</p>
+        </div>
+      ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
           {filteredBeans.map((bean) => (
             <BeanCard key={bean.id} bean={bean} />
@@ -405,24 +404,13 @@ export default function InventoryManagement() {
 
       {/* Modals */}
       {showAddModal && (
-        <AddBeanModal 
-          onClose={() => setShowAddModal(false)} 
-          onAdd={(bean) => {
-            dispatch({ type: 'ADD_GREEN_BEAN', payload: bean });
-            setShowAddModal(false);
-          }}
-        />
+        <AddBeanModal onClose={() => setShowAddModal(false)} />
       )}
 
       {showEditModal && selectedBean && (
         <EditBeanModal
           bean={selectedBean}
           onClose={() => {
-            setShowEditModal(false);
-            setSelectedBean(null);
-          }}
-          onUpdate={(bean) => {
-            dispatch({ type: 'UPDATE_GREEN_BEAN', payload: bean });
             setShowEditModal(false);
             setSelectedBean(null);
           }}

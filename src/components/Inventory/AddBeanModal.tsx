@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { GreenBean } from '../../types';
+import { useAppContext } from '../../context/AppContext';
 
 interface AddBeanModalProps {
   onClose: () => void;
-  onAdd: (bean: GreenBean) => void;
 }
 
-export default function AddBeanModal({ onClose, onAdd }: AddBeanModalProps) {
+export default function AddBeanModal({ onClose }: AddBeanModalProps) {
+  const { services } = useAppContext();
   const [formData, setFormData] = useState({
     supplierName: '',
     variety: '',
@@ -16,12 +16,13 @@ export default function AddBeanModal({ onClose, onAdd }: AddBeanModalProps) {
     purchasePricePerKg: '',
     lowStockThreshold: '50'
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    const newBean: GreenBean = {
-      id: Date.now().toString(),
+    const newBean = {
       supplierName: formData.supplierName,
       variety: formData.variety,
       origin: formData.origin,
@@ -32,7 +33,15 @@ export default function AddBeanModal({ onClose, onAdd }: AddBeanModalProps) {
       lowStockThreshold: parseFloat(formData.lowStockThreshold)
     };
 
-    onAdd(newBean);
+    const result = await services.greenBeans.add(newBean);
+    
+    if (result.success) {
+      onClose();
+    } else {
+      alert('Gagal menambah biji kopi: ' + result.error);
+    }
+    
+    setIsLoading(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,14 +163,16 @@ export default function AddBeanModal({ onClose, onAdd }: AddBeanModalProps) {
               type="button"
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={isLoading}
             >
               Batal
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+              className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50"
+              disabled={isLoading}
             >
-              Tambah
+              {isLoading ? 'Menyimpan...' : 'Tambah'}
             </button>
           </div>
         </form>

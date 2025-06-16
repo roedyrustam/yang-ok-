@@ -3,18 +3,19 @@ import { Bell, User, LogOut, ChevronDown } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 
 export default function Header() {
-  const { state, dispatch } = useAppContext();
+  const { state, dispatch, auth, services } = useAppContext();
   const { user, notifications } = state;
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const handleLogout = () => {
-    dispatch({ type: 'SET_USER', payload: null });
+  const handleLogout = async () => {
+    await auth.logout();
   };
 
-  const markNotificationRead = (id: string) => {
+  const markNotificationRead = async (id: string) => {
+    await services.notifications.update(id, { read: true });
     dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
   };
 
